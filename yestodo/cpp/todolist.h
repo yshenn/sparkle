@@ -33,6 +33,7 @@ private:
 
 public:
   Entry();
+  ~Entry() {}
 
   void set_isdone(bool isdone);
   void set_addtime(int addtime);
@@ -55,6 +56,7 @@ private:
 public:
   Todolist();
   Todolist(int scope);
+  ~Todolist() {}
 
   void load_list(json::iterator it);
   std::string getdate();
@@ -73,10 +75,11 @@ public:
   Todos();
   Todos(int scope);
   Todos(int scope, int buf);
+  ~Todos() {}
 
   void load_todos();
   Todolist &get_todolists();
-  void set_pos(int pos);
+  void set_pos(int dpos);
 };
 
 #endif

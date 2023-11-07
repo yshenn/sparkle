@@ -1,4 +1,5 @@
 #include "widgets.h"
+#include <curses.h>
 #include <vector>
 
 void initUI() {
@@ -18,8 +19,8 @@ void draw_clock() {
 
 void draw_todolist(Todolist &list) {
   int y, x;
-  getyx(stdscr, y, x);
-  y += 1;
+  // getyx(stdscr, y, x);
+  y = 2;
   x = COLS / 2;
   mvprintw(y, x, list.getdate().c_str());
   std::vector<Entry *> &entryIng = list.getEntryIng();
@@ -33,5 +34,37 @@ void draw_todolist(Todolist &list) {
        head != entryDone.end(); head++) {
     mvprintw(++y, 0, (*head)->get_content().c_str());
     mvprintw(++y, 0, "\n");
+  }
+}
+
+void clearArea(int y, int x) {
+  move(y, x);
+  clrtoeol();
+}
+
+bool key_event() {
+  char key = wgetch(stdscr);
+  switch (key) {
+  case 'h':
+    wig_todo[scope]->set_pos(1);
+    draw_todolist(wig_todo[scope]->get_todolists());
+    clearArea(5, 0);
+    return false;
+  case 'l':
+    wig_todo[scope]->set_pos(-1);
+    draw_todolist(wig_todo[scope]->get_todolists());
+    clearArea(5, 0);
+    return false;
+
+  //  break;
+  // case 'j':
+
+  //  break;
+  // case 'k':
+
+  //  break;
+  case 'q':
+    // some work about closing and cleaning
+    return true;
   }
 }

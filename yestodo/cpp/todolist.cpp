@@ -76,4 +76,4 @@ void Todos::load_todos() {
 }
 
 Todolist &Todos::get_todolists() { return *todolists[pos]; }
-void Todos::set_pos(int pos) { this->pos = pos; }
+void Todos::set_pos(int dpos) { this->pos += dpos; }
