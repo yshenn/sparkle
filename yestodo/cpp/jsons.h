@@ -6,6 +6,6 @@
 
 using json = nlohmann::json;
 
-json parseFile(std::ifstream file);
+json parseFile(std::string filename);
 
 #endif

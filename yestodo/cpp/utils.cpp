@@ -1,6 +1,4 @@
 #include "utils.h"
-#include <ctime>
-#include <ncurses.h>
 
 std::string get_time() {
   time_t now = time(0);
@@ -19,12 +17,4 @@ std::string get_time() {
   timestr += std::to_string(min);
   // string datestr = "";
   return timestr;
-}
-
-void draw_username(std::string username) { mvprintw(0, 0, username.c_str()); }
-
-void draw_clock() {
-  std::string timestr = get_time();
-  int lenoftmstr = (int)timestr.size();
-  mvprintw(0, COLS - lenoftmstr, timestr.c_str());
 }
