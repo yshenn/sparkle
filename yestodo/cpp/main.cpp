@@ -4,14 +4,14 @@
 #include <ncurses.h>
 #include <string>
 
+int scope = DAY;
+std::vector<Todos *> wig_todo;
+
 /*************************/
 // Ret: void
 // Args: std::vector<Todos *> &
 // Description: 读入每个scope的数据，创建Todos对象进行初始化工作
 /*************************/
-int scope = DAY;
-std::vector<Todos *> wig_todo;
-
 void init_todo(std::vector<Todos *> &wig_todo);
 
 int main(int argc, char *argv[]) {
@@ -24,7 +24,9 @@ int main(int argc, char *argv[]) {
   initUI();
   draw_username(username);
   draw_clock();
-  draw_todolist(wig_todo[scope]->get_todolists());
+  Todolist *to_draw;
+  if (wig_todo[scope]->get_todolists(&to_draw))
+    draw_todolist(*to_draw);
 
   refresh();
 
@@ -32,6 +34,8 @@ int main(int argc, char *argv[]) {
     if (key_event()) {
       break;
     }
+    draw_username(username);
+    draw_clock();
     refresh();
   }
   // getch();

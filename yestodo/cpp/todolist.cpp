@@ -23,7 +23,7 @@ Todolist::Todolist(int scope) : scope(scope) {}
 
 /*************************/
 // Ret: void
-// Args: json::iterator
+// Args: json::iterator (json数组迭代器)
 // Description: 通过json的arr迭代器，将json对象中数据读入Todolist对象
 /*************************/
 void Todolist::load_list(json::iterator it) {
@@ -45,17 +45,35 @@ void Todolist::load_list(json::iterator it) {
   }
 }
 
+/*************************/
+// Ret: std::string
+// Args: void
+// Description: [api-member]返回当前todolist的日期
+/*************************/
 std::string Todolist::getdate() { return dateofscope; }
 
+/*************************/
+// Ret: std::vector<Entry *> &
+// Args: void
+// Description: [api-member]返回entryIng成员的引用
+/*************************/
 std::vector<Entry *> &Todolist::getEntryIng() { return entryIng; }
+
+/*************************/
+// Ret: std::vector<Entry *> &
+// Args: void
+// Description: [api-member]返回entryDone成员的引用
+/*************************/
 std::vector<Entry *> &Todolist::getEntryDone() { return entryDone; }
 
 /********************/
 /****** Todos *******/
 /********************/
-Todos::Todos() : scope(DAY), bufsize(DEFBUF), pos(0) {}
-Todos::Todos(int scope) : scope(scope), bufsize(DEFBUF), pos(0) {}
-Todos::Todos(int scope, int buf) : scope(scope), bufsize(buf), pos(0) {}
+Todos::Todos() : scope(DAY), bufsize(DEFBUF), pos(0), numoftodolist(0) {}
+Todos::Todos(int scope)
+    : scope(scope), bufsize(DEFBUF), pos(0), numoftodolist(0) {}
+Todos::Todos(int scope, int buf)
+    : scope(scope), bufsize(buf), pos(0), numoftodolist(0) {}
 
 /*************************/
 // Ret: void
@@ -68,12 +86,39 @@ void Todos::load_todos() {
 
   // 在arr的大小以及bufsize范围内，将json对象中的数据存入todolists对象数组中
   while (it != data.end() && it < data.begin() + bufsize) {
-    Todolist *tmp_list = new Todolist(scope);
-    tmp_list->load_list(it);
-    todolists.push_back(tmp_list);
+    Todolist *tmp_list = new Todolist(scope); // 创建todolist对象
+    tmp_list->load_list(it); // 将json对象中的数据加载进todolist对象中
+    todolists.push_back(
+        tmp_list); // 将todolist指针存入todolists指针vector数组中
+    numoftodolist++;
     it++;
   }
 }
 
-Todolist &Todos::get_todolists() { return *todolists[pos]; }
-void Todos::set_pos(int dpos) { this->pos += dpos; }
+/*************************/
+// Ret: bool
+// Args: Todolist *
+// Description: [api-member]返回当前位置的todolist对象
+/*************************/
+bool Todos::get_todolists(Todolist **todolistOfPos) {
+  if (numoftodolist != 0) {
+    *todolistOfPos = todolists[pos];
+    return true;
+  } else
+    return false;
+}
+
+/*************************/
+// Ret: void
+// Args: dpos : int  (表示位置的变化量)
+// Description: [api-member]改变成员属性pos
+/*************************/
+bool Todos::set_pos(int dpos) {
+  int tmppos = pos + dpos;
+  if (tmppos > -1 && tmppos < numoftodolist) {
+    this->pos = tmppos;
+    return true;
+  } else {
+    return false;
+  }
+}

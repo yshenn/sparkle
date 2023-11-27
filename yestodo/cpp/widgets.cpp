@@ -22,6 +22,8 @@ void draw_todolist(Todolist &list) {
   // getyx(stdscr, y, x);
   y = 2;
   x = COLS / 2;
+
+  erase(); // clear the whole window (scr)
   mvprintw(y, x, list.getdate().c_str());
   std::vector<Entry *> &entryIng = list.getEntryIng();
   std::vector<Entry *> &entryDone = list.getEntryDone();
@@ -44,27 +46,48 @@ void clearArea(int y, int x) {
 
 bool key_event() {
   char key = wgetch(stdscr);
+  Todolist *to_draw;
+  int tmp_scope = 0;
   switch (key) {
   case 'h':
-    wig_todo[scope]->set_pos(1);
-    draw_todolist(wig_todo[scope]->get_todolists());
-    clearArea(5, 0);
+    if (wig_todo[scope]->set_pos(1)) {
+      if (wig_todo[scope]->get_todolists(&to_draw))
+        draw_todolist(*to_draw);
+      // clearArea(5, 0);
+    }
     return false;
   case 'l':
-    wig_todo[scope]->set_pos(-1);
-    draw_todolist(wig_todo[scope]->get_todolists());
-    clearArea(5, 0);
+    if (wig_todo[scope]->set_pos(-1)) {
+      if (wig_todo[scope]->get_todolists(&to_draw))
+        draw_todolist(*to_draw);
+      // clearArea(5, 0);
+    }
+    return false;
+
+  case 'j':
+    tmp_scope = scope + 1;
+    if (tmp_scope < 4) {
+      scope = tmp_scope;
+      if (wig_todo[scope]->get_todolists(&to_draw))
+        draw_todolist(*to_draw);
+    }
     return false;
 
   //  break;
-  // case 'j':
-
-  //  break;
-  // case 'k':
+  case 'k':
+    tmp_scope = scope - 1;
+    if (tmp_scope > -1) {
+      scope = tmp_scope;
+      if (wig_todo[scope]->get_todolists(&to_draw))
+        draw_todolist(*to_draw);
+    }
+    return false;
 
   //  break;
   case 'q':
     // some work about closing and cleaning
     return true;
+  default:
+    return false;
   }
 }

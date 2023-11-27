@@ -11,12 +11,12 @@ json parseFile(std::string filename) {
   json data;                        // 创建json对象
   if (jsonfile) { // 通过流对象状态，判断文件是否打开成功
     data = json::parse(jsonfile);
-    jsonfile.close(); // 关闭与流对象绑定的文件
-  } else {            // 错误处理
-    json eptArr = json::array();
+    jsonfile.close();     // 关闭与流对象绑定的文件
+  } else {                // 错误处理
+    data = json::array(); // 创建一个空数组存入空文件中
     std::ofstream newfile(
         filename, std::ofstream::out); // 如果文件不存在，则创建一个空的文件
-    newfile << eptArr << std::endl;
+    newfile << data << std::endl;
     newfile.close();
     // std::cerr << filename << "open failed" << std::endl;
     // exit(1);

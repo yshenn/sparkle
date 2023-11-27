@@ -12,6 +12,7 @@
 // #define WEEK 2
 // #define DAY 3
 
+// 默认的todolist buffer 为7, 即每个scope开始加载的todolist数为7
 #define DEFBUF 7
 
 enum Scope {
@@ -47,11 +48,11 @@ public:
 
 class Todolist {
 private:
-  const int scope;
-  std::string dateofscope;
-  int numOfEntrys;
-  std::vector<Entry *> entryIng;
-  std::vector<Entry *> entryDone;
+  const int scope;                // 当前todolist的scope
+  std::string dateofscope;        // 当前todolist表示的日期
+  int numOfEntrys;                // Entry的数目
+  std::vector<Entry *> entryIng;  // 未完成的entry
+  std::vector<Entry *> entryDone; // 完成的entry
 
 public:
   Todolist();
@@ -64,12 +65,14 @@ public:
   std::vector<Entry *> &getEntryDone();
 };
 
+// todos类，表示某个scope的todolists
 class Todos {
 private:
-  const int scope;
-  const int bufsize;
-  int pos;
-  std::vector<Todolist *> todolists;
+  const int scope;                   // 范围
+  const int bufsize;                 // 默认加载的todolist数
+  int pos;                           // 当前显示的todolist的位置
+  int numoftodolist;                 // 加载的todolist数目
+  std::vector<Todolist *> todolists; // todolist指针数组
 
 public:
   Todos();
@@ -78,8 +81,8 @@ public:
   ~Todos() {}
 
   void load_todos();
-  Todolist &get_todolists();
-  void set_pos(int dpos);
+  bool get_todolists(Todolist **todolistOfPos);
+  bool set_pos(int dpos);
 };
 
 #endif
