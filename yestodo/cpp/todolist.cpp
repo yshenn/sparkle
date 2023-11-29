@@ -1,4 +1,5 @@
 #include "todolist.h"
+#include "widgets.h"
 // #include "jsons.h"
 
 /********************/
@@ -18,8 +19,8 @@ std::string Entry::get_content() { return content; }
 /********************/
 /***** Todolist *****/
 /********************/
-Todolist::Todolist() : scope(DAY) {}
-Todolist::Todolist(int scope) : scope(scope) {}
+Todolist::Todolist() : scope(DAY), numOfEntrys(0) {}
+Todolist::Todolist(int scope) : scope(scope), numOfEntrys(0) {}
 
 /*************************/
 // Ret: void
@@ -42,6 +43,7 @@ void Todolist::load_list(json::iterator it) {
       entryDone.push_back(tmp_entry);
     }
     it_entrys++;
+    numOfEntrys++;
   }
 }
 
@@ -65,6 +67,34 @@ std::vector<Entry *> &Todolist::getEntryIng() { return entryIng; }
 // Description: [api-member]返回entryDone成员的引用
 /*************************/
 std::vector<Entry *> &Todolist::getEntryDone() { return entryDone; }
+
+void Todolist::addEntry(std::string newentry) {
+  Entry *tmp_entry = new Entry;
+  tmp_entry->set_addtime(time(0));  // 设置addtime, now time
+  tmp_entry->set_donetime(time(0)); // 设置donetime
+  tmp_entry->set_isdone(false);     // 设置isdone
+  tmp_entry->set_content(newentry); // 设置content
+  entryIng.push_back(tmp_entry);
+  numOfEntrys++;
+}
+
+void Todolist::changeEntry(std::string changedEntry) {
+  Entry *tmp_entry = entryIng[entrySelected];
+  tmp_entry->set_content(changedEntry); // 设置content
+}
+
+void Todolist::doneEntry() {
+  int pos = entrySelected % entryIng.size();
+  entryIng[pos]->set_isdone(true);
+  entryDone.push_back(entryIng[pos]);
+  entryIng.erase(entryIng.begin() + pos);
+}
+
+void Todolist::deleteEntry() {
+  int pos = entrySelected % entryIng.size();
+  entryIng.erase(entryIng.begin() + pos);
+  numOfEntrys--;
+}
 
 /********************/
 /****** Todos *******/
@@ -122,3 +152,6 @@ bool Todos::set_pos(int dpos) {
     return false;
   }
 }
+
+// save the changes of Todos object
+void Todos::save() {}

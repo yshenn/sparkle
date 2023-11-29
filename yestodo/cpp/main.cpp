@@ -6,6 +6,13 @@
 
 int scope = DAY;
 std::vector<Todos *> wig_todo;
+WINDOW *todolistwin = nullptr;
+WINDOW *inputwin = nullptr;
+int mode = SHOW_MODE;
+int premode = SHOW_MODE;
+
+// if entrySelected == -1, in SHOW_MODE, else in SELECTED_MODE
+int entrySelected = -1;
 
 /*************************/
 // Ret: void
@@ -29,14 +36,21 @@ int main(int argc, char *argv[]) {
     draw_todolist(*to_draw);
 
   refresh();
+  wrefresh(todolistwin);
 
   while (true) {
     if (key_event()) {
       break;
     }
-    draw_username(username);
-    draw_clock();
-    refresh();
+    // if (inputwin)
+    //   wrefresh(inputwin);
+    wrefresh(todolistwin);
+    // refresh();
+  }
+
+  // save the changes
+  for (auto todos : wig_todo) {
+    todos->save();
   }
   // getch();
   // endwin();

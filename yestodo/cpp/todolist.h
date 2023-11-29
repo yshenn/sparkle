@@ -63,6 +63,10 @@ public:
   std::string getdate();
   std::vector<Entry *> &getEntryIng();
   std::vector<Entry *> &getEntryDone();
+  void addEntry(std::string);
+  void changeEntry(std::string);
+  void doneEntry();
+  void deleteEntry();
 };
 
 // todos类，表示某个scope的todolists
@@ -83,6 +87,7 @@ public:
   void load_todos();
   bool get_todolists(Todolist **todolistOfPos);
   bool set_pos(int dpos);
+  void save();
 };
 
 #endif

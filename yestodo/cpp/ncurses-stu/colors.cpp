@@ -3,6 +3,8 @@
 #include <curses.h>
 #include <ncurses.h>
 
+#define COLOR_TEST 8
+
 void print_in_middle(WINDOW *win, int starty, int startx, int width,
                      char *string);
 int main(int argc, char *argv[]) {
@@ -14,7 +16,8 @@ int main(int argc, char *argv[]) {
   }
 
   start_color();
-  init_pair(1, COLOR_RED, COLOR_BLACK);
+  init_color(COLOR_TEST, 183, 208, 36);
+  init_pair(1, COLOR_TEST, COLOR_WHITE);
 
   attron(COLOR_PAIR(1));
   print_in_middle(stdscr, LINES / 2, 0, 0, "Viola !!! In color ...");

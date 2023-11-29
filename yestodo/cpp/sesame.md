@@ -154,8 +154,11 @@ C++的内存泄漏是指在程序运行时，未能正确释放先前分配的�
 
 内存泄漏可能会导致程序性能下降，最终导致程序崩溃，因为系统资源用尽。为避免内存泄漏，C++程序员应该小心管理动态分配的内存，使用智能指针（如std::shared_ptr和std::unique_ptr）来帮助管理内存，并确保在不再需要资源时释放它们。此外，可以使用工具和技术，如Valgrind和内存检查工具，来检测和纠正内存泄漏问题。
 
+# ESC has a built-in 200ms pause
+[link](https://github.com/gui-cs/Terminal.Gui/issues/439)
 
-
+[under](https://www.gnu.org/software/guile-ncurses/manual/html_node/Getting-characters-from-the-keyboard.html)
+Use of the ESC key by a programmer for a single character function is discouraged, as it will cause a delay of up to one second while the keypad code looks for a following function-key sequence.
 
 
 
