@@ -7,5 +7,6 @@
 using json = nlohmann::json;
 
 json parseFile(std::string filename);
+void writeFile(std::string filename, json data);
 
 #endif

@@ -1,47 +1,12 @@
 [
   {
-    "dateofscope": "2023-W48",
+    "dateofscope": 202349,
     "entrys": [
       {
-        "content": "23W48task1: do my homework",
-        "isdone": true,
-        "addtime": 1600,
-        "donetime": 1650
-      },
-      {
-        "content": "23W48task2: memory some words.",
-        "isdone": false,
-        "addtime": 1700,
-        "donetime": 1750
-      },
-      {
-        "content": "23W48task3: read some books.",
-        "isdone": true,
-        "addtime": 1800,
-        "donetime": 1850
-      }
-    ]
-  },
-  {
-    "dateofscope": "2023-W49",
-    "entrys": [
-      {
-        "content": "23W49task1: do my homework",
-        "isdone": false,
-        "addtime": 1600,
-        "donetime": 1650
-      },
-      {
-        "content": "23W49task2: memory some words.",
-        "isdone": true,
-        "addtime": 1700,
-        "donetime": 1750
-      },
-      {
-        "content": "23W49task3: read some books.",
-        "isdone": false,
-        "addtime": 1800,
-        "donetime": 1850
+        "addtime": 1701487335,
+        "content": "task2: complete the paper",
+        "donetime": 1701487335,
+        "isdone": false
       }
     ]
   }

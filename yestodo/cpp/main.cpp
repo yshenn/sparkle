@@ -49,9 +49,9 @@ int main(int argc, char *argv[]) {
   }
 
   // save the changes
-  for (auto todos : wig_todo) {
-    todos->save();
-  }
+  // for (auto todos : wig_todo) {
+  //  todos->save();
+  //}
   // getch();
   // endwin();
 

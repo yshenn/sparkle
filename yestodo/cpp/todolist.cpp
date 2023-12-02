@@ -1,4 +1,5 @@
 #include "todolist.h"
+#include "utils.h"
 #include "widgets.h"
 // #include "jsons.h"
 
@@ -16,11 +17,22 @@ int Entry::get_addtime() { return addtime; }
 int Entry::get_donetime() { return donetime; }
 std::string Entry::get_content() { return content; }
 
+json Entry::savetojson() {
+  json entry = json::object();
+  entry.push_back(json::object_t::value_type("addtime", addtime));
+  entry.push_back(json::object_t::value_type("donetime", donetime));
+  entry.push_back(json::object_t::value_type("isdone", isdone));
+  entry.push_back(json::object_t::value_type("content", content));
+  return entry;
+}
+
 /********************/
 /***** Todolist *****/
 /********************/
 Todolist::Todolist() : scope(DAY), numOfEntrys(0) {}
 Todolist::Todolist(int scope) : scope(scope), numOfEntrys(0) {}
+Todolist::Todolist(int scope, int num, int date)
+    : scope(scope), numOfEntrys(num), dateofscope(date) {}
 
 /*************************/
 // Ret: void
@@ -28,8 +40,8 @@ Todolist::Todolist(int scope) : scope(scope), numOfEntrys(0) {}
 // Description: 通过json的arr迭代器，将json对象中数据读入Todolist对象
 /*************************/
 void Todolist::load_list(json::iterator it) {
-  this->dateofscope = it->value("dateofscope", "not found"); // 设置dateofscope
-  json entrys = (*it)["entrys"]; // 获取entrys数组
+  this->dateofscope = (*it)["dateofscope"]; // 设置dateofscope
+  json entrys = (*it)["entrys"];            // 获取entrys数组
   json::iterator it_entrys = entrys.begin();
   while (it_entrys != entrys.end()) { // 设置每一条Entry
     Entry *tmp_entry = new Entry;
@@ -38,9 +50,9 @@ void Todolist::load_list(json::iterator it) {
     tmp_entry->set_isdone((*it_entrys)["isdone"]);     // 设置isdone
     tmp_entry->set_content((*it_entrys)["content"]);   // 设置content
     if (tmp_entry->is_done()) {
-      entryIng.push_back(tmp_entry);
-    } else {
       entryDone.push_back(tmp_entry);
+    } else {
+      entryIng.push_back(tmp_entry);
     }
     it_entrys++;
     numOfEntrys++;
@@ -52,7 +64,7 @@ void Todolist::load_list(json::iterator it) {
 // Args: void
 // Description: [api-member]返回当前todolist的日期
 /*************************/
-std::string Todolist::getdate() { return dateofscope; }
+int Todolist::getdate() { return dateofscope; }
 
 /*************************/
 // Ret: std::vector<Entry *> &
@@ -86,6 +98,7 @@ void Todolist::changeEntry(std::string changedEntry) {
 void Todolist::doneEntry() {
   int pos = entrySelected % entryIng.size();
   entryIng[pos]->set_isdone(true);
+  entryIng[pos]->set_donetime(time(0));
   entryDone.push_back(entryIng[pos]);
   entryIng.erase(entryIng.begin() + pos);
 }
@@ -96,14 +109,29 @@ void Todolist::deleteEntry() {
   numOfEntrys--;
 }
 
+json Todolist::savetojson() {
+  json header = json::object();
+  header.push_back(json::object_t::value_type("dateofscope", dateofscope));
+  json entrys = json::array();
+  for (auto it = entryIng.begin(); it != entryIng.end(); it++) {
+    entrys.push_back((*it)->savetojson());
+  }
+  for (auto it = entryDone.begin(); it != entryDone.end(); it++) {
+    entrys.push_back((*it)->savetojson());
+  }
+  header.push_back(json::object_t::value_type("entrys", entrys));
+  return header;
+}
+
 /********************/
 /****** Todos *******/
 /********************/
-Todos::Todos() : scope(DAY), bufsize(DEFBUF), pos(0), numoftodolist(0) {}
+Todos::Todos()
+    : scope(DAY), bufsize(DEFBUF), pos(0), numoftodolist(0), changed(false) {}
 Todos::Todos(int scope)
-    : scope(scope), bufsize(DEFBUF), pos(0), numoftodolist(0) {}
+    : scope(scope), bufsize(DEFBUF), pos(0), numoftodolist(0), changed(false) {}
 Todos::Todos(int scope, int buf)
-    : scope(scope), bufsize(buf), pos(0), numoftodolist(0) {}
+    : scope(scope), bufsize(buf), pos(0), numoftodolist(0), changed(false) {}
 
 /*************************/
 // Ret: void
@@ -122,6 +150,13 @@ void Todos::load_todos() {
         tmp_list); // 将todolist指针存入todolists指针vector数组中
     numoftodolist++;
     it++;
+  }
+
+  // if not have current todolist, add it
+  if (numoftodolist == 0 || todolists[0]->getdate() != get_dateofscope(scope)) {
+    Todolist *tmp_list = new Todolist(scope, 0, get_dateofscope(scope));
+    todolists.insert(todolists.begin(), tmp_list);
+    numoftodolist++;
   }
 }
 
@@ -153,5 +188,26 @@ bool Todos::set_pos(int dpos) {
   }
 }
 
+bool Todos::is_now_pos() {
+  if (pos == 0) {
+    return true;
+  } else {
+    return false;
+  }
+}
+
+void Todos::set_changed(bool ischanged) { changed = ischanged; }
+bool Todos::get_changed() { return changed; }
+
 // save the changes of Todos object
-void Todos::save() {}
+void Todos::save() {
+  json olddata = parseFile(jsonfiles[scope]);
+  // 如果json文件中存在最新date的todolist, 则删除
+  if (olddata.begin() != olddata.end() &&
+      olddata[0]["dateofscope"] == get_dateofscope(scope)) {
+    olddata.erase(olddata.begin());
+  }
+  json header = todolists[0]->savetojson();
+  olddata.insert(olddata.begin(), header);
+  writeFile(jsonfiles[scope], olddata);
+}

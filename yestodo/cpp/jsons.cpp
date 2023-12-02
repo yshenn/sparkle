@@ -1,4 +1,5 @@
 #include "jsons.h"
+#include <fstream>
 #include <iostream>
 
 /*************************/
@@ -22,4 +23,9 @@ json parseFile(std::string filename) {
     // exit(1);
   }
   return data;
+}
+
+void writeFile(std::string filename, json data) {
+  std::ofstream jsonfile(filename, std::ofstream::out);
+  jsonfile << to_string(data);
 }

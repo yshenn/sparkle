@@ -1,4 +1,5 @@
 #include "widgets.h"
+#include "utils.h"
 #include <curses.h>
 #include <ios>
 #include <ncurses.h>
@@ -34,7 +35,7 @@ void draw_todolist(Todolist &list) {
   int y, x;
   // getyx(stdscr, y, x);
   y = 2;
-  std::string datastr = list.getdate();
+  std::string datastr = datetostr(list.getdate(), scope);
   x = (COLS - datastr.size()) / 2;
 
   // erase(); // clear the whole window (scr)
@@ -146,7 +147,9 @@ bool key_event() {
     }
     return false;
   case 9:
-    if (mode == SHOW_MODE || mode == SELECT_MODE) {
+    // 在SHOW_MODE下，并且是最新的todolist中，才可以进入SELECT_MODE进行选中和编辑
+    if (mode == (SHOW_MODE && wig_todo[scope]->is_now_pos()) ||
+        mode == SELECT_MODE) {
       entrySelected++;
       if (wig_todo[scope]->get_todolists(&to_draw))
         draw_todolist(*to_draw);
@@ -180,6 +183,7 @@ bool key_event() {
       noecho();
       if (wig_todo[scope]->get_todolists(&to_draw)) {
         to_draw->addEntry(newentry);
+        wig_todo[scope]->set_changed(true);
       }
       draw_todolist(*to_draw);
 
@@ -192,6 +196,7 @@ bool key_event() {
     if (mode == SELECT_MODE) {
       if (wig_todo[scope]->get_todolists(&to_draw)) {
         to_draw->doneEntry();
+        wig_todo[scope]->set_changed(true);
         // back to show mode , reset 'mode' and 'entrySelected'
         mode = SHOW_MODE;
         entrySelected = -1;
@@ -214,6 +219,7 @@ bool key_event() {
       noecho();
       if (wig_todo[scope]->get_todolists(&to_draw)) {
         to_draw->changeEntry(changedEntry);
+        wig_todo[scope]->set_changed(true);
       }
       draw_todolist(*to_draw);
 
@@ -226,8 +232,19 @@ bool key_event() {
     if (mode == SELECT_MODE) {
       if (wig_todo[scope]->get_todolists(&to_draw)) {
         to_draw->deleteEntry();
+        wig_todo[scope]->set_changed(true);
       }
       draw_todolist(*to_draw);
+    }
+    return false;
+
+  case 's':
+    if (mode == SHOW_MODE) {
+      for (auto it = wig_todo.begin(); it != wig_todo.end(); it++) {
+        if ((*it)->get_changed()) {
+          (*it)->save();
+        }
+      }
     }
     return false;
 
