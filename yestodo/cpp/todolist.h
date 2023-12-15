@@ -1,5 +1,5 @@
-#ifndef _TODOLIST_H_
-#define _TODOLIST_H_
+#ifndef TODOLIST_H_
+#define TODOLIST_H_
 
 #include "jsons.h"
 #include <ctime>
@@ -22,6 +22,7 @@ enum Scope {
   YEAR,
 };
 
+extern int entrySelected;
 const std::string jsonfiles[] = {"day.json", "week.json", "mon.json",
                                  "year.json"};
 

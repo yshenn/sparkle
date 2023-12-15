@@ -1,5 +1,5 @@
-#ifndef _WIDGETS_H_
-#define _WIDGETS_H_
+#ifndef WIDGETS_H_
+#define WIDGETS_H_
 
 #include "todolist.h"
 #include "utils.h"

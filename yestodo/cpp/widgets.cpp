@@ -1,4 +1,5 @@
 #include "widgets.h"
+#include "todolist.h"
 #include "utils.h"
 #include <curses.h>
 #include <ios>
